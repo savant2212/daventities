@@ -101,7 +101,7 @@ class Content(Base):
         self.mime_type  = mime_type
 
     def __repr__(self):
-        return "<Content('%s','%s', '%s')>" % (self.tree_object, self.content, self.revision)
+        return "<Content('%s','%s', '%s')>" % (self.object, self.content, self.revision)
 
 
 class TreeObject(Base):
@@ -131,7 +131,7 @@ class TreeObject(Base):
     TYPE_FILE       = 0
     
     def get_last_revision(self):
-        return self.revisions[-1]
+        return self.revisions[0]
     
     last_revision=property(get_last_revision)
 
