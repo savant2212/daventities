@@ -73,10 +73,10 @@ class Group(Base):
                     backref=backref('parent', remote_side=id)
                 )
     
-    def __init__(self, name, base_dir, parent_id = None, is_deleted=False):
+    def __init__(self, name, base_dir, parent = None, is_deleted=False):
         self.name=name
         self.is_deleted = is_deleted
-        self.parent_id  = parent_id
+        self.parent  = parent
         self.base_dir   = base_dir
 
 #content
@@ -121,7 +121,7 @@ class TreeObject(Base):
                     backref='TreeObjects',order_by=desc("Contents.revision")
                 )    
     nodes   = relationship("TreeObject",
-                    backref=backref('TreeObjects', remote_side=id)
+                    backref=backref('parent', remote_side=id)
                 )
 #    parent   = relationship("TreeObject",
 #                    backref=backref('TreeObjects', remote_side=parent_id, uselist=False)
@@ -131,7 +131,10 @@ class TreeObject(Base):
     TYPE_FILE       = 0
     
     def get_last_revision(self):
-        return self.revisions[0]
+        if len(self.revisions) > 0:
+            return self.revisions[0]
+        else:
+            return None
     
     last_revision=property(get_last_revision)
 
