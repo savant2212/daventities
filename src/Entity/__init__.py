@@ -58,6 +58,8 @@ class User(Base):
         self.full_name = full_name
         self.is_deleted = is_deleted
     
+    def getRestrictions(self, obj, sess):        
+        return sess.query(ActionRestrict).filter_by(actor_id=self.id, object_id=obj.id, actor_type='1')
 
 class Group(Base):
     __tablename__='Groups'
@@ -73,10 +75,10 @@ class Group(Base):
                     backref=backref('parent', remote_side=id)
                 )
     
-    def __init__(self, name, base_dir, parent = None, is_deleted=False):
+    def __init__(self, name, base_dir = None, parent = None, is_deleted=False):
         self.name=name
         self.is_deleted = is_deleted
-        self.parent  = parent
+        self.parent  = parent        
         self.base_dir   = base_dir
 
 #content
