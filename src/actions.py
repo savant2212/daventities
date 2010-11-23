@@ -15,8 +15,10 @@ actions = { 'GET'       : 0x00000001,
             'LOCK'      : 0x00004000,
             'UNLOCK'    : 0x00008000,
             'ADMIN'     : 0x00010000,
+            'HISTORY'   : 0x00020000,
             'ALL'       : 0xFFFFFFFF
         }
 
-user_root_acts = actions['GET'] | actions['PROPFIND'] | actions['MKCOL'] | actions['USERINFO'] | actions['OPTIONS'] 
+user_root_acts = actions['GET'] | actions['PROPFIND'] | actions['MKCOL'] | actions['USERINFO'] | actions['OPTIONS'] | actions['HEAD']
 user_dir_acts = actions['GET'] | actions['PROPFIND'] | actions['MKCOL'] | actions['USERINFO'] | actions['OPTIONS'] | actions['PUT'] | actions['LOCK'] | actions['UNLOCK'] | actions['COPY'] | actions['MOVE'] | actions['HEAD']
+user_hist_acts = actions['GET'] | actions['PROPFIND'] | actions['USERINFO'] | actions['OPTIONS'] | actions['HEAD'] | actions['HISTORY']

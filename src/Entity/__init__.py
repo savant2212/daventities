@@ -41,7 +41,17 @@ user_directory = Table(
     Column('object_id', Integer, ForeignKey('TreeObjects.id')),
     Column('user_id', Integer, ForeignKey('Users.id'))
     )
-            
+
+class ObjectRevision(Base):
+    __tablename__= 'ObjectRevisions'
+    id = Column(Integer , primary_key=True)
+    revision  = Column(Integer)
+    mod_time  = Column(Float)
+    TreeObjects_id = Column(Integer, ForeignKey('TreeObjects.id'))
+    Contents_id= Column(Integer, ForeignKey('Contents.id'))
+    content = relationship("Content", backref=backref("object_assocs", uselist=False), uselist=False, cascade="all")
+    
+        
 class User(Base):
     __tablename__='Users'
     id          = Column(Integer, primary_key=True)
@@ -86,24 +96,16 @@ class Content(Base):
     __tablename__= 'Contents'
 
     id        = Column(Integer, primary_key=True)
-    object_id = Column(Integer, ForeignKey('TreeObjects.id'))
-    revision  = Column(Integer)
-    content   = Column(String)
-    mod_time  = Column(Float)
+    content   = Column(String)    
     is_deleted  = Column(Boolean)
     mime_type = Column(String)
-    object   = relationship("TreeObject",
-                    backref='Contents', uselist=False
-                )
-    def __init__(self, revision, content, tree_object, mime_type='application/octet-stream',mod_time=time.time()):
-        self.revision   = revision
+    
+    def __init__(self, content, mime_type='application/octet-stream'):
         self.content    = content
-        self.object  = tree_object
-        self.mod_time   = mod_time
         self.mime_type  = mime_type
 
     def __repr__(self):
-        return "<Content('%s','%s', '%s')>" % (self.object, self.content, self.revision)
+        return "<Content('%s','%s')>" % (self.id, self.content)
 
 
 class TreeObject(Base):
@@ -119,18 +121,19 @@ class TreeObject(Base):
     mod_time    = Column(Float)
     creat_time  = Column(Float)
     is_deleted  = Column(Boolean, nullable=False)
-    revisions   = relationship("Content",
-                    backref='TreeObjects',order_by=desc("Contents.revision")
-                )    
+    
+    #revisions =  relationship('Content', secondary=object_revision, backref='objects', order_by=desc("Contents.revision"))
+    revisions = relationship("ObjectRevision", backref="objects", order_by=desc("ObjectRevisions.revision"), cascade='all')
+    
     nodes   = relationship("TreeObject",
                     backref=backref('parent', remote_side=id)
-                )
-#    parent   = relationship("TreeObject",
-#                    backref=backref('TreeObjects', remote_side=parent_id, uselist=False)
-#                )
+                )   
+  
     
-    TYPE_COLLECTION = 1
     TYPE_FILE       = 0
+    TYPE_COLLECTION = 1
+    TYPE_HISTORY    = 2
+    TYPE_REV_FILE   = 3
     
     def get_last_revision(self):
         if len(self.revisions) > 0:
