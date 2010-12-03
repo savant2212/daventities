@@ -13,13 +13,15 @@ class ActionRestrict(Base):
     actor_id    = Column(Integer)
     actor_type  = Column(Integer)    
     object_id   = Column(Integer)
+    object_type = Column(Integer)
     action   = Column(Integer)    
 
-    def __init__(self, actor_id, actor_type, object_id, action):
+    def __init__(self, actor_id, actor_type, object_id, action, object_type=1):
         self.actor_id = actor_id
         self.actor_type = actor_type
         self.object_id = object_id
         self.action = action
+        self.object_type = object_type
         
      
 
@@ -40,6 +42,16 @@ user_directory = Table(
     'UserDirectories', Base.metadata,    
     Column('object_id', Integer, ForeignKey('TreeObjects.id')),
     Column('user_id', Integer, ForeignKey('Users.id'))
+    )
+
+audit = Table(
+    'audit', Base.metadata,    
+    Column('id', Integer, primary_key=True),
+    Column('user_id', Integer, ForeignKey('Users.id')),
+    Column('object_id', Integer, ForeignKey('TreeObjects.id')),
+    Column('action_time', Float),
+    Column('action', Integer),
+    Column('result', Integer)
     )
 
 class ObjectRevision(Base):
@@ -69,7 +81,7 @@ class User(Base):
         self.is_deleted = is_deleted
     
     def getRestrictions(self, obj, sess):        
-        return sess.query(ActionRestrict).filter_by(actor_id=self.id, object_id=obj.id, actor_type='1')
+        return sess.query(ActionRestrict).filter_by(actor_id=self.id, object_id=obj.id, actor_type='1', object_type='2')
 
 class Group(Base):
     __tablename__='Groups'

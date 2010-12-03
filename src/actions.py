@@ -22,3 +22,7 @@ actions = { 'GET'       : 0x00000001,
 user_root_acts = actions['GET'] | actions['PROPFIND'] | actions['MKCOL'] | actions['USERINFO'] | actions['OPTIONS'] | actions['HEAD']
 user_dir_acts = actions['GET'] | actions['PROPFIND'] | actions['MKCOL'] | actions['USERINFO'] | actions['OPTIONS'] | actions['PUT'] | actions['LOCK'] | actions['UNLOCK'] | actions['COPY'] | actions['MOVE'] | actions['HEAD']
 user_hist_acts = actions['GET'] | actions['PROPFIND'] | actions['USERINFO'] | actions['OPTIONS'] | actions['HEAD'] | actions['HISTORY']
+
+object_actions = {
+                  
+                  }
