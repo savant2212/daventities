@@ -14,7 +14,7 @@ class ActionRestrict(Base):
     actor_type  = Column(Integer)    
     object_id   = Column(Integer)
     object_type = Column(Integer)
-    action   = Column(Integer)    
+    action      = Column(Integer)    
 
     def __init__(self, actor_id, actor_type, object_id, action, object_type=1):
         self.actor_id = actor_id
@@ -133,6 +133,7 @@ class TreeObject(Base):
     mod_time    = Column(Float)
     creat_time  = Column(Float)
     is_deleted  = Column(Boolean, nullable=False)
+    flags       = Column(Integer)
     
     #revisions =  relationship('Content', secondary=object_revision, backref='objects', order_by=desc("Contents.revision"))
     revisions = relationship("ObjectRevision", backref="objects", order_by=desc("ObjectRevisions.revision"), cascade='all')
@@ -141,6 +142,9 @@ class TreeObject(Base):
                     backref=backref('parent', remote_side=id)
                 )   
   
+    properties   = relationship("ObjectProperty",
+                    backref=backref('object', remote_side=id)
+                )
     
     TYPE_FILE       = 0
     TYPE_COLLECTION = 1
@@ -172,3 +176,11 @@ class TreeObject(Base):
     def __repr__(self):
         return "<TreeObject('%s','%s','%s',)>" % (
          self.name, self.type, self.parent)
+
+class ObjectProperty(Base):
+    __tablename__= 'Properties'
+    id        = Column(Integer, primary_key=True)
+    object_id = Column(Integer)
+    name      = Column(String)
+    value     = Column(String)  
+    

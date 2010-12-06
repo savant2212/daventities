@@ -24,5 +24,5 @@ user_dir_acts = actions['GET'] | actions['PROPFIND'] | actions['MKCOL'] | action
 user_hist_acts = actions['GET'] | actions['PROPFIND'] | actions['USERINFO'] | actions['OPTIONS'] | actions['HEAD'] | actions['HISTORY']
 
 object_actions = {
-                  
+                'HISTORY' : 0x00000001  
                   }
