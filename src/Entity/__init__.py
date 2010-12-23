@@ -4,6 +4,7 @@ from sqlalchemy.orm import mapper, sessionmaker, relationship, backref
 
 from sqlalchemy.sql.expression import desc
 import time
+from sqlalchemy.types import BigInteger
 
 Base = declarative_base()
 
@@ -14,15 +15,14 @@ class ActionRestrict(Base):
     actor_type  = Column(Integer)    
     object_id   = Column(Integer)
     object_type = Column(Integer)
-    action      = Column(Integer)    
+    action      = Column(BigInteger)    
 
     def __init__(self, actor_id, actor_type, object_id, action, object_type=1):
         self.actor_id = actor_id
         self.actor_type = actor_type
         self.object_id = object_id
         self.action = action
-        self.object_type = object_type
-        
+        self.object_type = object_type       
      
 
 # user data
@@ -136,7 +136,7 @@ class TreeObject(Base):
     flags       = Column(Integer)
     
     #revisions =  relationship('Content', secondary=object_revision, backref='objects', order_by=desc("Contents.revision"))
-    revisions = relationship("ObjectRevision", backref="objects", order_by=desc("ObjectRevisions.revision"), cascade='all')
+    revisions = relationship("ObjectRevision", backref="objects", order_by=desc("\"ObjectRevisions\".revision"), cascade='all')
     
     nodes   = relationship("TreeObject",
                     backref=backref('parent', remote_side=id)
@@ -180,7 +180,13 @@ class TreeObject(Base):
 class ObjectProperty(Base):
     __tablename__= 'Properties'
     id        = Column(Integer, primary_key=True)
-    object_id = Column(Integer)
+    object_id = Column(Integer, ForeignKey('TreeObjects.id'))
     name      = Column(String)
-    value     = Column(String)  
+    value     = Column(String) 
+    
+    def __init__(self, name, value,object):
+        self.name = name
+        self.value = value
+        self.object = object
+        
     
